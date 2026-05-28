@@ -1,0 +1,7 @@
+# Список бібліотек Python (pip install -r requirements.txt)
+
+fastapi
+uvicorn[standard]
+pydantic-settings
+python-dotenv
+sqlalchemy
