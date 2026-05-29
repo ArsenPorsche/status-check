@@ -21,10 +21,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 class Base(DeclarativeBase):
-    """
-    Базовий клас для майбутніх моделей (таблиць).
-    На кроці 4–5 додамо User, Commitment — вони успадкують Base.
-    """
+    """Базовий клас: усі моделі (User, Commitment, ...) успадковують його."""
 
     pass
 
@@ -44,8 +41,10 @@ def get_db() -> Generator[Session, None, None]:
 def init_db() -> None:
     """
     Створює таблиці в SQLite, якщо їх ще немає.
-    Поки моделей немає — файл .db створиться, таблиці з'являться на кроці 4–5.
+    Імпорт моделей обов'язковий: інакше SQLAlchemy не знає про таблицю users.
     """
+    from app.models import user  # noqa: F401
+
     Base.metadata.create_all(bind=engine)
 
 
