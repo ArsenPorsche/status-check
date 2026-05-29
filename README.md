@@ -71,6 +71,8 @@ Filters: `GET /commitments?project=Backend&reviewer=Anna`
 
 Auto-expiry: if `deadline` is past and `status` is not `done`, API returns `"status": "expired"`.
 
+Frontend: **Calendar** view (deadlines on a month grid) and **List** view toggle.
+
 ## Frontend (React + Vite)
 
 ```bash

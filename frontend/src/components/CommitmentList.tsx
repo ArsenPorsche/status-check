@@ -5,9 +5,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { fetchCommitments, type ListFilters } from "../api/commitments";
 import CommitmentCard from "./CommitmentCard";
+import CommitmentCalendar from "./CommitmentCalendar";
 import CommitmentCreateSection from "./CommitmentCreateSection";
 
+type ViewMode = "list" | "calendar";
+
 export default function CommitmentList() {
+  const [view, setView] = useState<ViewMode>("calendar");
   const [items, setItems] = useState<Awaited<ReturnType<typeof fetchCommitments>>>(
     [],
   );
@@ -64,7 +68,25 @@ export default function CommitmentList() {
       <CommitmentCreateSection onCreated={handleListChange} />
 
       <section className="panel">
-        <h2>Commitments</h2>
+        <div className="panel-head">
+          <h2>Commitments</h2>
+          <div className="view-tabs">
+            <button
+              type="button"
+              className={view === "calendar" ? "tab active" : "tab"}
+              onClick={() => setView("calendar")}
+            >
+              Calendar
+            </button>
+            <button
+              type="button"
+              className={view === "list" ? "tab active" : "tab"}
+              onClick={() => setView("list")}
+            >
+              List
+            </button>
+          </div>
+        </div>
 
         <form className="filters" onSubmit={handleApplyFilters}>
           <label>
@@ -102,7 +124,7 @@ export default function CommitmentList() {
           <p className="empty">No commitments found.</p>
         )}
 
-        {!loading && items.length > 0 && (
+        {!loading && items.length > 0 && view === "list" && (
           <ul className="commitment-list">
             {items.map((item) => (
               <CommitmentCard
@@ -112,6 +134,10 @@ export default function CommitmentList() {
               />
             ))}
           </ul>
+        )}
+
+        {!loading && items.length > 0 && view === "calendar" && (
+          <CommitmentCalendar items={items} onChanged={handleListChange} />
         )}
       </section>
     </>
