@@ -10,7 +10,7 @@ from app.core.config import get_settings
 from app.core.database import check_db_connection, get_db, init_db
 from app.models.commitment import Commitment
 from app.models.user import User
-from app.routers import auth
+from app.routers import auth, commitments
 
 settings = get_settings()
 
@@ -34,6 +34,7 @@ app = FastAPI(
 )
 
 app.include_router(auth.router)
+app.include_router(commitments.router)
 
 
 @app.get("/health")
