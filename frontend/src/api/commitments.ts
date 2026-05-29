@@ -89,6 +89,41 @@ export async function createCommitment(
   return response.json() as Promise<Commitment>;
 }
 
+export type UpdateCommitmentBody = {
+  status?: CommitmentStatus;
+};
+
+export async function updateCommitment(
+  id: number,
+  body: UpdateCommitmentBody,
+): Promise<Commitment> {
+  const response = await fetch(`${API_URL}/commitments/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(),
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    throw new Error(await readErrorMessage(response));
+  }
+
+  return response.json() as Promise<Commitment>;
+}
+
+export async function deleteCommitment(id: number): Promise<void> {
+  const response = await fetch(`${API_URL}/commitments/${id}`, {
+    method: "DELETE",
+    headers: authHeaders(),
+  });
+
+  if (!response.ok) {
+    throw new Error(await readErrorMessage(response));
+  }
+}
+
 export async function aiCreateFromText(rawText: string): Promise<Commitment> {
   const response = await fetch(`${API_URL}/commitments/ai-create`, {
     method: "POST",
