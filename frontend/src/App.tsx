@@ -1,17 +1,14 @@
-// Головний екран: крок 3 — login / register + /auth/me
+// Головний екран: крок 4 — список commitments після входу
 
 import { useCallback, useEffect, useState } from "react";
 import { fetchMe, logout, type UserResponse } from "./api/auth";
-import { fetchHealth, type HealthResponse } from "./api/health";
 import { getToken } from "./auth/token";
 import AuthPanel from "./components/AuthPanel";
+import CommitmentList from "./components/CommitmentList";
 
 function App() {
   const [user, setUser] = useState<UserResponse | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
-
-  const [health, setHealth] = useState<HealthResponse | null>(null);
-  const [healthError, setHealthError] = useState<string | null>(null);
 
   const loadUser = useCallback(async () => {
     const token = getToken();
@@ -36,26 +33,9 @@ function App() {
     loadUser();
   }, [loadUser]);
 
-  useEffect(() => {
-    if (!user) {
-      return;
-    }
-
-    fetchHealth()
-      .then((data) => {
-        setHealth(data);
-        setHealthError(null);
-      })
-      .catch((err: unknown) => {
-        const message = err instanceof Error ? err.message : "Unknown error";
-        setHealthError(message);
-      });
-  }, [user]);
-
   function handleLogout() {
     logout();
     setUser(null);
-    setHealth(null);
   }
 
   if (authLoading) {
@@ -67,7 +47,7 @@ function App() {
   }
 
   return (
-    <main className="app">
+    <main className="app app-wide">
       <header className="header">
         <h1>Status Check</h1>
         {user && (
@@ -84,14 +64,7 @@ function App() {
           <p className="welcome">
             Signed in as <strong>{user.full_name}</strong> (@{user.username})
           </p>
-
-          <section className="panel">
-            <h2>Backend /health</h2>
-            {healthError && <p className="error">{healthError}</p>}
-            {health && (
-              <pre className="json">{JSON.stringify(health, null, 2)}</pre>
-            )}
-          </section>
+          <CommitmentList />
         </>
       )}
     </main>
