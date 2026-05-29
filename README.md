@@ -79,7 +79,13 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:5173
+Open http://localhost:5173 (should show JSON from backend `/health`).
+
+Run backend in another terminal:
+
+```bash
+.venv/Scripts/uvicorn app.main:app --reload
+```
 
 ## Project layout
 
