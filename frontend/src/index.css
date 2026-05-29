@@ -238,3 +238,39 @@ body {
   background: #fef3c7;
   color: #92400e;
 }
+
+.create-section {
+  margin-bottom: 1rem;
+}
+
+.create-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+  .create-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.create-form h3 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+}
+
+.create-form textarea,
+.create-form select {
+  padding: 0.5rem 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.hint {
+  margin: 0 0 0.75rem;
+  font-size: 0.85rem;
+  color: #666;
+}

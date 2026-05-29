@@ -8,6 +8,7 @@ import {
   type Commitment,
   type ListFilters,
 } from "../api/commitments";
+import CommitmentCreateSection from "./CommitmentCreateSection";
 
 function formatDate(iso: string): string {
   const date = new Date(iso);
@@ -30,6 +31,8 @@ export default function CommitmentList() {
   // Значення в полях форми фільтрів
   const [project, setProject] = useState("");
   const [reviewer, setReviewer] = useState("");
+  // Останні застосовані фільтри (щоб після create оновити той самий список)
+  const [appliedFilters, setAppliedFilters] = useState<ListFilters>({});
 
   const load = useCallback(async (filters: ListFilters) => {
     setLoading(true);
@@ -54,21 +57,31 @@ export default function CommitmentList() {
 
   function handleApplyFilters(event: React.FormEvent) {
     event.preventDefault();
-    load({
+    const filters = {
       project: project || undefined,
       reviewer: reviewer || undefined,
-    });
+    };
+    setAppliedFilters(filters);
+    load(filters);
   }
 
   function handleClearFilters() {
     setProject("");
     setReviewer("");
+    setAppliedFilters({});
     load({});
   }
 
+  function handleCreated() {
+    load(appliedFilters);
+  }
+
   return (
-    <section className="panel">
-      <h2>Commitments</h2>
+    <>
+      <CommitmentCreateSection onCreated={handleCreated} />
+
+      <section className="panel">
+        <h2>Commitments</h2>
 
       <form className="filters" onSubmit={handleApplyFilters}>
         <label>
@@ -135,6 +148,7 @@ export default function CommitmentList() {
           ))}
         </ul>
       )}
-    </section>
+      </section>
+    </>
   );
 }
