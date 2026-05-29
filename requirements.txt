@@ -2,7 +2,10 @@
 
 fastapi
 uvicorn[standard]
+python-multipart
 pydantic-settings
 python-dotenv
 sqlalchemy
 email-validator
+bcrypt
+python-jose[cryptography]

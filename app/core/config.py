@@ -20,8 +20,14 @@ class Settings(BaseSettings):
     # Шлях до SQLite (файл status_check.db у корені проєкту)
     database_url: str = "sqlite:///./status_check.db"
 
-    # Секретний ключ (буде на кроці з авторизацією)
+    # Секретний ключ для підпису JWT
     secret_key: str = "change-me"
+
+    # Алгоритм підпису токена
+    algorithm: str = "HS256"
+
+    # Скільки хвилин живе access token
+    access_token_expire_minutes: int = 60
 
     # Звідки читати .env (файл у корені проєкту)
     model_config = SettingsConfigDict(
