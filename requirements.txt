@@ -9,3 +9,5 @@ sqlalchemy
 email-validator
 bcrypt
 python-jose[cryptography]
+langchain-core
+langchain-openai

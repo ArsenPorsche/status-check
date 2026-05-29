@@ -29,6 +29,10 @@ class Settings(BaseSettings):
     # Скільки хвилин живе access token
     access_token_expire_minutes: int = 60
 
+    # OpenAI для POST /commitments/ai-create
+    openai_api_key: str = ""
+    openai_model: str = "gpt-4o-mini"
+
     # Звідки читати .env (файл у корені проєкту)
     model_config = SettingsConfigDict(
         env_file=".env",

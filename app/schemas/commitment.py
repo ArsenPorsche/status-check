@@ -38,6 +38,12 @@ class CommitmentCreate(CommitmentBase):
     """
 
 
+class CommitmentAIParsed(CommitmentBase):
+    """
+    Схема для LangChain .with_structured_output — AI заповнює ці поля з raw_text.
+    """
+
+
 class CommitmentUpdate(BaseModel):
     """PATCH /commitments/{id} — усі поля опційні (часткове оновлення)."""
 
