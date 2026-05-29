@@ -41,9 +41,9 @@ def get_db() -> Generator[Session, None, None]:
 def init_db() -> None:
     """
     Створює таблиці в SQLite, якщо їх ще немає.
-    Імпорт моделей обов'язковий: інакше SQLAlchemy не знає про таблицю users.
+    Імпорт моделей обов'язковий: інакше SQLAlchemy не знає про таблиці.
     """
-    from app.models import user  # noqa: F401
+    from app.models import commitment, user  # noqa: F401
 
     Base.metadata.create_all(bind=engine)
 

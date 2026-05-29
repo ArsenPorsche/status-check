@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
 from app.core.database import check_db_connection, get_db, init_db
+from app.models.commitment import Commitment
 from app.models.user import User
 
 settings = get_settings()
@@ -42,6 +43,7 @@ def health(db: Session = Depends(get_db)):
 
     # Скільки користувачів у таблиці (0 — нормально, поки немає реєстрації)
     user_count = db.query(User).count()
+    commitment_count = db.query(Commitment).count()
 
     return {
         "status": "ok",
@@ -49,4 +51,5 @@ def health(db: Session = Depends(get_db)):
         "debug": settings.debug,
         "database": "ok" if check_db_connection() else "error",
         "users_table": user_count,
+        "commitments_table": commitment_count,
     }
