@@ -71,16 +71,24 @@ Filters: `GET /commitments?project=Backend&reviewer=Anna`
 
 Auto-expiry: if `deadline` is past and `status` is not `done`, API returns `"status": "expired"`.
 
+## Frontend (React + Vite)
+
+```bash
+cd /d/zero/PL/pets/status-check/frontend
+npm install
+npm run dev
+```
+
+Open http://localhost:5173
+
 ## Project layout
 
 ```
-app/
-  main.py           # FastAPI app
-  core/             # config, database
-  models/           # SQLAlchemy tables
-  schemas/          # Pydantic API models
-  routers/          # HTTP endpoints
-  services/         # business logic
+app/                # FastAPI backend
+frontend/           # React UI (Vite)
+  src/
+    main.tsx        # entry
+    App.tsx         # root component
 ```
 
 ## Example: AI create
