@@ -5,6 +5,7 @@
 
 import { useState } from "react";
 import { login, register, type RegisterBody } from "../api/auth";
+import { LIMITS } from "../config";
 
 type Props = {
   onSuccess: () => void;
@@ -79,6 +80,7 @@ export default function AuthPanel({ onSuccess }: Props) {
             onChange={(e) => setUsername(e.target.value)}
             required
             minLength={3}
+            maxLength={LIMITS.username}
           />
         </label>
 
@@ -99,6 +101,7 @@ export default function AuthPanel({ onSuccess }: Props) {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 required
+                maxLength={LIMITS.fullName}
               />
             </label>
           </>
@@ -112,6 +115,7 @@ export default function AuthPanel({ onSuccess }: Props) {
             onChange={(e) => setPassword(e.target.value)}
             required
             minLength={6}
+            maxLength={LIMITS.password}
           />
         </label>
 

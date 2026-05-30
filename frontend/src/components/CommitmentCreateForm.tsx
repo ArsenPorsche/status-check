@@ -7,6 +7,7 @@ import {
   createCommitment,
   type CommitmentStatus,
 } from "../api/commitments";
+import { LIMITS } from "../config";
 
 const STATUS_OPTIONS: CommitmentStatus[] = [
   "to check",
@@ -72,7 +73,12 @@ export default function CommitmentCreateForm({ onCreated }: Props) {
 
       <label>
         Title
-        <input value={title} onChange={(e) => setTitle(e.target.value)} required />
+        <input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          required
+          maxLength={LIMITS.commitmentTitle}
+        />
       </label>
 
       <label>
@@ -86,17 +92,32 @@ export default function CommitmentCreateForm({ onCreated }: Props) {
 
       <label>
         Project
-        <input value={project} onChange={(e) => setProject(e.target.value)} required />
+        <input
+          value={project}
+          onChange={(e) => setProject(e.target.value)}
+          required
+          maxLength={LIMITS.commitmentField}
+        />
       </label>
 
       <label>
         Assignee
-        <input value={assignee} onChange={(e) => setAssignee(e.target.value)} required />
+        <input
+          value={assignee}
+          onChange={(e) => setAssignee(e.target.value)}
+          required
+          maxLength={LIMITS.commitmentField}
+        />
       </label>
 
       <label>
         Reviewer
-        <input value={reviewer} onChange={(e) => setReviewer(e.target.value)} required />
+        <input
+          value={reviewer}
+          onChange={(e) => setReviewer(e.target.value)}
+          required
+          maxLength={LIMITS.commitmentField}
+        />
       </label>
 
       <label>

@@ -4,6 +4,7 @@
 
 import { useState } from "react";
 import { aiCreateFromText } from "../api/commitments";
+import { LIMITS } from "../config";
 
 type Props = {
   onCreated: () => void;
@@ -47,6 +48,7 @@ export default function CommitmentAICreate({ onCreated }: Props) {
           rows={4}
           required
           minLength={3}
+          maxLength={LIMITS.aiRawText}
           placeholder="Paste meeting notes or chat message…"
         />
       </label>
