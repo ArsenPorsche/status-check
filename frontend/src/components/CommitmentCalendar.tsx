@@ -17,6 +17,7 @@ const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 type Props = {
   items: Commitment[];
+  currentUserId: number;
   onChanged: () => void;
 };
 
@@ -26,7 +27,7 @@ function statusDotClass(status: Commitment["status"]): string {
   return "cal-dot";
 }
 
-export default function CommitmentCalendar({ items, onChanged }: Props) {
+export default function CommitmentCalendar({ items, currentUserId, onChanged }: Props) {
   const today = new Date();
   const [cursor, setCursor] = useState(
     () => new Date(today.getFullYear(), today.getMonth(), 1),
@@ -130,6 +131,7 @@ export default function CommitmentCalendar({ items, onChanged }: Props) {
               <CommitmentCard
                 key={`${item.id}-${item.status}`}
                 item={item}
+                currentUserId={currentUserId}
                 onChanged={onChanged}
               />
             ))}

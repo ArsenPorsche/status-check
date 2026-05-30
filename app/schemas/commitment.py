@@ -47,11 +47,11 @@ class CommitmentAIParsed(CommitmentBase):
 class CommitmentUpdate(BaseModel):
     """PATCH /commitments/{id} — усі поля опційні (часткове оновлення)."""
 
-    title: str | None = None
+    title: str | None = Field(default=None, min_length=1, max_length=500)
     description: str | None = None
-    project: str | None = None
-    assignee: str | None = None
-    reviewer: str | None = None
+    project: str | None = Field(default=None, min_length=1, max_length=255)
+    assignee: str | None = Field(default=None, min_length=1, max_length=255)
+    reviewer: str | None = Field(default=None, min_length=1, max_length=255)
     deadline: datetime | None = None
     status: CommitmentStatusSchema | None = None
 

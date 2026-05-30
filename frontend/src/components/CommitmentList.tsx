@@ -10,7 +10,11 @@ import CommitmentCreateSection from "./CommitmentCreateSection";
 
 type ViewMode = "list" | "calendar";
 
-export default function CommitmentList() {
+type Props = {
+  currentUserId: number;
+};
+
+export default function CommitmentList({ currentUserId }: Props) {
   const [view, setView] = useState<ViewMode>("calendar");
   const [items, setItems] = useState<Awaited<ReturnType<typeof fetchCommitments>>>(
     [],
@@ -130,6 +134,7 @@ export default function CommitmentList() {
               <CommitmentCard
                 key={`${item.id}-${item.status}`}
                 item={item}
+                currentUserId={currentUserId}
                 onChanged={handleListChange}
               />
             ))}
@@ -137,7 +142,11 @@ export default function CommitmentList() {
         )}
 
         {!loading && items.length > 0 && view === "calendar" && (
-          <CommitmentCalendar items={items} onChanged={handleListChange} />
+          <CommitmentCalendar
+            items={items}
+            currentUserId={currentUserId}
+            onChanged={handleListChange}
+          />
         )}
       </section>
     </>

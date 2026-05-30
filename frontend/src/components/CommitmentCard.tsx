@@ -21,6 +21,7 @@ const QUICK_STATUSES: CommitmentStatus[] = [
 
 type Props = {
   item: Commitment;
+  currentUserId: number;
   onChanged: () => void;
 };
 
@@ -36,7 +37,8 @@ function statusClass(status: Commitment["status"]): string {
   return "badge";
 }
 
-export default function CommitmentCard({ item, onChanged }: Props) {
+export default function CommitmentCard({ item, currentUserId, onChanged }: Props) {
+  const canEdit = item.author_id === currentUserId;
   const [editing, setEditing] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -76,7 +78,7 @@ export default function CommitmentCard({ item, onChanged }: Props) {
     }
   }
 
-  if (editing) {
+  if (editing && canEdit) {
     return (
       <li className="commitment-card editing">
         <CommitmentEditForm
@@ -119,46 +121,50 @@ export default function CommitmentCard({ item, onChanged }: Props) {
         </div>
       </dl>
 
-      <div className="card-actions">
-        <button
-          type="button"
-          className="secondary"
-          disabled={busy}
-          onClick={() => setEditing(true)}
-        >
-          Edit
-        </button>
-
-        <label className="status-edit">
-          Quick status
-          <select
-            defaultValue={item.status === "expired" ? "to check" : item.status}
+      {canEdit && (
+        <div className="card-actions">
+          <button
+            type="button"
+            className="secondary"
             disabled={busy}
-            onChange={(e) =>
-              handleQuickStatus(e.target.value as CommitmentStatus)
-            }
+            onClick={() => setEditing(true)}
           >
-            {QUICK_STATUSES.map((value) => (
-              <option key={value} value={value}>
-                {value}
-              </option>
-            ))}
-          </select>
-        </label>
+            Edit
+          </button>
 
-        <button
-          type="button"
-          className="danger"
-          disabled={busy}
-          onClick={handleDelete}
-        >
-          Delete
-        </button>
-      </div>
+          <label className="status-edit">
+            Quick status
+            <select
+              defaultValue={item.status === "expired" ? "to check" : item.status}
+              disabled={busy}
+              onChange={(e) =>
+                handleQuickStatus(e.target.value as CommitmentStatus)
+              }
+            >
+              {QUICK_STATUSES.map((value) => (
+                <option key={value} value={value}>
+                  {value}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <button
+            type="button"
+            className="danger"
+            disabled={busy}
+            onClick={handleDelete}
+          >
+            Delete
+          </button>
+        </div>
+      )}
 
       {item.status === "expired" && (
         <p className="hint">
-          Shown as expired (deadline passed). Use Edit or set status to done.
+          {canEdit
+            ? "Shown as expired (deadline passed). Use Edit or set status to done."
+            : "Shown as expired (deadline passed)."}
         </p>
       )}
 

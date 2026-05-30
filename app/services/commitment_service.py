@@ -2,6 +2,7 @@
 
 from datetime import datetime, timezone
 
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.models.commitment import Commitment, CommitmentStatus
@@ -65,10 +66,10 @@ def list_commitments(
     query = db.query(Commitment)
 
     if project is not None:
-        query = query.filter(Commitment.project == project)
+        query = query.filter(func.lower(Commitment.project) == project.lower())
 
     if reviewer is not None:
-        query = query.filter(Commitment.reviewer == reviewer)
+        query = query.filter(func.lower(Commitment.reviewer) == reviewer.lower())
 
     rows = query.order_by(Commitment.deadline.asc()).all()
     return [to_read_schema(row) for row in rows]

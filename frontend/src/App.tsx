@@ -64,7 +64,7 @@ function App() {
           <p className="welcome">
             Signed in as <strong>{user.full_name}</strong> (@{user.username})
           </p>
-          <CommitmentList />
+          <CommitmentList currentUserId={user.id} />
         </>
       )}
     </main>
