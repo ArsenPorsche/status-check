@@ -57,10 +57,17 @@ def update_one(
     commitment_id: int,
     data: CommitmentUpdate,
     db: Session = Depends(get_db),
-    _user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
 ):
-    """PATCH /commitments/{id} — лише поля, які передали."""
-    result = commitment_service.update_commitment(db, commitment_id, data)
+    """PATCH /commitments/{id} — лише автор може змінювати."""
+    result, forbidden = commitment_service.update_commitment(
+        db, commitment_id, current_user.id, data
+    )
+    if forbidden:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You can only edit your own commitments",
+        )
     if result is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Commitment not found")
     return result
@@ -70,10 +77,15 @@ def update_one(
 def delete_one(
     commitment_id: int,
     db: Session = Depends(get_db),
-    _user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
 ):
-    """DELETE /commitments/{id}"""
-    deleted = commitment_service.delete_commitment(db, commitment_id)
-    if not deleted:
+    """DELETE /commitments/{id} — лише автор може видаляти."""
+    outcome = commitment_service.delete_commitment(db, commitment_id, current_user.id)
+    if outcome == "forbidden":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You can only delete your own commitments",
+        )
+    if outcome == "not_found":
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Commitment not found")
     return None

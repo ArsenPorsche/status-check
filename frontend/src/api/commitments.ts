@@ -90,6 +90,12 @@ export async function createCommitment(
 }
 
 export type UpdateCommitmentBody = {
+  title?: string;
+  description?: string | null;
+  project?: string;
+  assignee?: string;
+  reviewer?: string;
+  deadline?: string;
   status?: CommitmentStatus;
 };
 

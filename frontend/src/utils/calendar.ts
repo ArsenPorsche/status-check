@@ -2,6 +2,8 @@
  * Допоміжні функції для місячного календаря (без зовнішніх бібліотек).
  */
 
+import { UI_LOCALE } from "../config";
+
 /** YYYY-MM-DD у локальній timezone браузера */
 export function toDateKey(date: Date): string {
   const y = date.getFullYear();
@@ -52,7 +54,7 @@ export function buildMonthGrid(year: number, month: number): (Date | null)[][] {
 }
 
 export function monthLabel(year: number, month: number): string {
-  return new Date(year, month, 1).toLocaleString(undefined, {
+  return new Date(year, month, 1).toLocaleString(UI_LOCALE, {
     month: "long",
     year: "numeric",
   });

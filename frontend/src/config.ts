@@ -4,3 +4,6 @@
  */
 export const API_URL =
   import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8000";
+
+/** Locale for dates in UI (month names, etc.) */
+export const UI_LOCALE = "en-US";

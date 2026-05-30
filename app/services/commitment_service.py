@@ -61,7 +61,7 @@ def list_commitments(
     project: str | None = None,
     reviewer: str | None = None,
 ) -> list[CommitmentRead]:
-    """Список з фільтрами ?project= & ?reviewer=."""
+    """Список усіх зобов'язань з фільтрами ?project= & ?reviewer=."""
     query = db.query(Commitment)
 
     if project is not None:
@@ -75,7 +75,7 @@ def list_commitments(
 
 
 def get_commitment(db: Session, commitment_id: int) -> CommitmentRead | None:
-    """Одне зобов'язання або None."""
+    """Одне зобов'язання за id або None."""
     row = db.query(Commitment).filter(Commitment.id == commitment_id).first()
     if row is None:
         return None
@@ -107,12 +107,18 @@ def create_commitment(
 def update_commitment(
     db: Session,
     commitment_id: int,
+    author_id: int,
     data: CommitmentUpdate,
-) -> CommitmentRead | None:
-    """Часткове оновлення — лише передані поля."""
+) -> tuple[CommitmentRead | None, bool]:
+    """
+    Часткове оновлення.
+    Повертає (результат, forbidden): forbidden=True, якщо запис є, але не ваш.
+    """
     row = db.query(Commitment).filter(Commitment.id == commitment_id).first()
     if row is None:
-        return None
+        return None, False
+    if row.author_id != author_id:
+        return None, True
 
     fields = data.model_dump(exclude_unset=True)
 
@@ -124,15 +130,20 @@ def update_commitment(
 
     db.commit()
     db.refresh(row)
-    return to_read_schema(row)
+    return to_read_schema(row), False
 
 
-def delete_commitment(db: Session, commitment_id: int) -> bool:
-    """True якщо видалили, False якщо id не існує."""
+def delete_commitment(db: Session, commitment_id: int, author_id: int) -> str:
+    """
+    Видалення запису.
+    Повертає: "deleted" | "not_found" | "forbidden".
+    """
     row = db.query(Commitment).filter(Commitment.id == commitment_id).first()
     if row is None:
-        return False
+        return "not_found"
+    if row.author_id != author_id:
+        return "forbidden"
 
     db.delete(row)
     db.commit()
-    return True
+    return "deleted"

@@ -32,10 +32,9 @@ def parse_text_to_commitment(raw_text: str) -> CommitmentCreate:
             (
                 "system",
                 (
-                    "Parse text into a project commitment. "
-                    "Fields: title, description, project, assignee, reviewer, deadline, status. "
-                    "Default status: 'to check'. Default reviewer: 'Unknown' if missing. "
-                    "Deadline as ISO 8601 UTC. Date only → 17:00 UTC that day."
+                    "Parse commitment: title, description, project, assignee, reviewer, deadline, status. "
+                    "status→'to check'; reviewer→'Unknown' if missing. "
+                    "deadline: ISO UTC; use time from text; date-only→23:59 UTC; no invented times."
                 ),
             ),
             ("human", "{raw_text}"),

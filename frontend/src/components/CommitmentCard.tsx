@@ -1,5 +1,5 @@
 /**
- * Одна картка зобов'язання: зміна статусу (PATCH) та видалення (DELETE).
+ * Картка зобов'язання: перегляд, редагування, статус, видалення.
  */
 
 import { useState } from "react";
@@ -9,8 +9,10 @@ import {
   type Commitment,
   type CommitmentStatus,
 } from "../api/commitments";
+import { UI_LOCALE } from "../config";
+import CommitmentEditForm from "./CommitmentEditForm";
 
-const EDITABLE_STATUSES: CommitmentStatus[] = [
+const QUICK_STATUSES: CommitmentStatus[] = [
   "to check",
   "done",
   "not actual",
@@ -23,7 +25,7 @@ type Props = {
 };
 
 function formatDate(iso: string): string {
-  return new Date(iso).toLocaleString();
+  return new Date(iso).toLocaleString(UI_LOCALE);
 }
 
 function statusClass(status: Commitment["status"]): string {
@@ -35,14 +37,11 @@ function statusClass(status: Commitment["status"]): string {
 }
 
 export default function CommitmentCard({ item, onChanged }: Props) {
-  const [status, setStatus] = useState<CommitmentStatus>(
-    item.status === "expired" ? "to check" : item.status,
-  );
+  const [editing, setEditing] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function handleStatusChange(newStatus: CommitmentStatus) {
-    setStatus(newStatus);
+  async function handleQuickStatus(newStatus: CommitmentStatus) {
     setError(null);
     setBusy(true);
 
@@ -52,7 +51,6 @@ export default function CommitmentCard({ item, onChanged }: Props) {
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Unknown error";
       setError(message);
-      setStatus(item.status === "expired" ? "to check" : item.status);
     } finally {
       setBusy(false);
     }
@@ -76,6 +74,21 @@ export default function CommitmentCard({ item, onChanged }: Props) {
     } finally {
       setBusy(false);
     }
+  }
+
+  if (editing) {
+    return (
+      <li className="commitment-card editing">
+        <CommitmentEditForm
+          item={item}
+          onSaved={() => {
+            setEditing(false);
+            onChanged();
+          }}
+          onCancel={() => setEditing(false)}
+        />
+      </li>
+    );
   }
 
   return (
@@ -107,16 +120,25 @@ export default function CommitmentCard({ item, onChanged }: Props) {
       </dl>
 
       <div className="card-actions">
+        <button
+          type="button"
+          className="secondary"
+          disabled={busy}
+          onClick={() => setEditing(true)}
+        >
+          Edit
+        </button>
+
         <label className="status-edit">
-          Set status
+          Quick status
           <select
-            value={EDITABLE_STATUSES.includes(status) ? status : "to check"}
+            defaultValue={item.status === "expired" ? "to check" : item.status}
             disabled={busy}
             onChange={(e) =>
-              handleStatusChange(e.target.value as CommitmentStatus)
+              handleQuickStatus(e.target.value as CommitmentStatus)
             }
           >
-            {EDITABLE_STATUSES.map((value) => (
+            {QUICK_STATUSES.map((value) => (
               <option key={value} value={value}>
                 {value}
               </option>
@@ -136,8 +158,7 @@ export default function CommitmentCard({ item, onChanged }: Props) {
 
       {item.status === "expired" && (
         <p className="hint">
-          Shown as expired (deadline passed). Set to done or change status to
-          update.
+          Shown as expired (deadline passed). Use Edit or set status to done.
         </p>
       )}
 
