@@ -1,5 +1,7 @@
 # POST /commitments/ai-create — зобов'язання з тексту
 
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
@@ -9,6 +11,8 @@ from app.routers.deps import get_current_user
 from app.schemas.ai import AICreateRequest
 from app.schemas.commitment import CommitmentRead
 from app.services import ai_service, commitment_service
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/commitments", tags=["ai"])
 
@@ -30,11 +34,12 @@ def ai_create(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail=str(exc),
         ) from exc
-    except Exception as exc:
+    except Exception:
+        logger.exception("AI parsing failed for user_id=%s", current_user.id)
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
-            detail=f"AI parsing failed: {exc}",
-        ) from exc
+            detail="AI parsing failed",
+        )
 
     return commitment_service.create_commitment(
         db,

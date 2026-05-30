@@ -4,14 +4,9 @@
 
 import { API_URL } from "../config";
 
-/** Форма JSON-відповіді від /health (як у FastAPI) */
+/** Форма JSON-відповіді від GET /health */
 export type HealthResponse = {
   status: string;
-  app: string;
-  debug: boolean;
-  database: string;
-  users_table: number;
-  commitments_table: number;
 };
 
 export async function fetchHealth(): Promise<HealthResponse> {

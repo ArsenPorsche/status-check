@@ -19,7 +19,7 @@ class UserCreate(UserBase):
     Пароль лише на вхід — у відповіді ніколи не повертаємо.
     """
 
-    password: str = Field(..., min_length=6)
+    password: str = Field(..., min_length=6, max_length=72)
 
 
 class UserRead(UserBase):

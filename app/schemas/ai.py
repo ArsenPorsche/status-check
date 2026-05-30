@@ -6,4 +6,4 @@ from pydantic import BaseModel, Field
 class AICreateRequest(BaseModel):
     """POST /commitments/ai-create — вільний текст."""
 
-    raw_text: str = Field(..., min_length=3)
+    raw_text: str = Field(..., min_length=3, max_length=1000)
