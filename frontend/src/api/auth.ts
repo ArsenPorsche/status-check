@@ -4,6 +4,7 @@
 
 import { API_URL } from "../config";
 import { clearToken, getToken, setToken } from "../auth/token";
+import { ApiError, readApiError } from "./errors";
 
 export type TokenResponse = {
   access_token: string;
@@ -44,8 +45,7 @@ export async function register(body: RegisterBody): Promise<UserResponse> {
   });
 
   if (!response.ok) {
-    const detail = await readErrorDetail(response);
-    throw new Error(detail);
+    throw new ApiError(await readApiError(response), response.status);
   }
 
   return response.json() as Promise<UserResponse>;
@@ -66,8 +66,7 @@ export async function login(username: string, password: string): Promise<void> {
   });
 
   if (!response.ok) {
-    const detail = await readErrorDetail(response);
-    throw new Error(detail);
+    throw new ApiError(await readApiError(response), response.status);
   }
 
   const data = (await response.json()) as TokenResponse;
@@ -80,8 +79,7 @@ export async function fetchMe(): Promise<UserResponse> {
   });
 
   if (!response.ok) {
-    const detail = await readErrorDetail(response);
-    throw new Error(detail);
+    throw new ApiError(await readApiError(response), response.status);
   }
 
   return response.json() as Promise<UserResponse>;
@@ -89,16 +87,4 @@ export async function fetchMe(): Promise<UserResponse> {
 
 export function logout(): void {
   clearToken();
-}
-
-async function readErrorDetail(response: Response): Promise<string> {
-  try {
-    const data = (await response.json()) as { detail?: string | { msg: string }[] };
-    if (typeof data.detail === "string") {
-      return data.detail;
-    }
-    return `Request failed: ${response.status}`;
-  } catch {
-    return `Request failed: ${response.status}`;
-  }
 }

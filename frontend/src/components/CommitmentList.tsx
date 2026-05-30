@@ -3,6 +3,7 @@
  */
 
 import { useCallback, useEffect, useState } from "react";
+import { ApiError } from "../api/errors";
 import { fetchCommitments, type ListFilters } from "../api/commitments";
 import CommitmentCard from "./CommitmentCard";
 import CommitmentCalendar from "./CommitmentCalendar";
@@ -12,9 +13,10 @@ type ViewMode = "list" | "calendar";
 
 type Props = {
   currentUserId: number;
+  onUnauthorized: () => void;
 };
 
-export default function CommitmentList({ currentUserId }: Props) {
+export default function CommitmentList({ currentUserId, onUnauthorized }: Props) {
   const [view, setView] = useState<ViewMode>("calendar");
   const [items, setItems] = useState<Awaited<ReturnType<typeof fetchCommitments>>>(
     [],
@@ -34,13 +36,17 @@ export default function CommitmentList({ currentUserId }: Props) {
       const data = await fetchCommitments(filters);
       setItems(data);
     } catch (err: unknown) {
+      if (err instanceof ApiError && err.status === 401) {
+        onUnauthorized();
+        return;
+      }
       const message = err instanceof Error ? err.message : "Unknown error";
       setError(message);
       setItems([]);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [onUnauthorized]);
 
   useEffect(() => {
     load({});

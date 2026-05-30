@@ -38,6 +38,11 @@ function App() {
     setUser(null);
   }
 
+  const handleUnauthorized = useCallback(() => {
+    logout();
+    setUser(null);
+  }, []);
+
   if (authLoading) {
     return (
       <main className="app">
@@ -64,7 +69,10 @@ function App() {
           <p className="welcome">
             Signed in as <strong>{user.full_name}</strong> (@{user.username})
           </p>
-          <CommitmentList currentUserId={user.id} />
+          <CommitmentList
+            currentUserId={user.id}
+            onUnauthorized={handleUnauthorized}
+          />
         </>
       )}
     </main>

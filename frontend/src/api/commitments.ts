@@ -2,6 +2,7 @@
  * HTTP-запити до /commitments (потрібен Bearer token).
  */
 
+import { assertOk } from "./errors";
 import { authHeaders } from "./auth";
 import { API_URL } from "../config";
 
@@ -63,10 +64,7 @@ export async function fetchCommitments(
     },
   });
 
-  if (!response.ok) {
-    throw new Error(`Failed to load commitments: ${response.status}`);
-  }
-
+  await assertOk(response);
   return response.json() as Promise<Commitment[]>;
 }
 
@@ -82,10 +80,7 @@ export async function createCommitment(
     body: JSON.stringify(body),
   });
 
-  if (!response.ok) {
-    throw new Error(await readErrorMessage(response));
-  }
-
+  await assertOk(response);
   return response.json() as Promise<Commitment>;
 }
 
@@ -112,10 +107,7 @@ export async function updateCommitment(
     body: JSON.stringify(body),
   });
 
-  if (!response.ok) {
-    throw new Error(await readErrorMessage(response));
-  }
-
+  await assertOk(response);
   return response.json() as Promise<Commitment>;
 }
 
@@ -125,9 +117,7 @@ export async function deleteCommitment(id: number): Promise<void> {
     headers: authHeaders(),
   });
 
-  if (!response.ok) {
-    throw new Error(await readErrorMessage(response));
-  }
+  await assertOk(response);
 }
 
 export async function aiCreateFromText(rawText: string): Promise<Commitment> {
@@ -140,21 +130,6 @@ export async function aiCreateFromText(rawText: string): Promise<Commitment> {
     body: JSON.stringify({ raw_text: rawText }),
   });
 
-  if (!response.ok) {
-    throw new Error(await readErrorMessage(response));
-  }
-
+  await assertOk(response);
   return response.json() as Promise<Commitment>;
-}
-
-async function readErrorMessage(response: Response): Promise<string> {
-  try {
-    const data = (await response.json()) as { detail?: string };
-    if (typeof data.detail === "string") {
-      return data.detail;
-    }
-  } catch {
-    // ignore
-  }
-  return `Request failed: ${response.status}`;
 }
