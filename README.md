@@ -19,39 +19,52 @@ Calendar tracker for PMs to monitor team commitments and deadlines.
 
 ## Quick start
 
-### Backend
+Run **backend and frontend** in two terminals.
+
+### 1. Backend
+
+From the project root:
 
 ```bash
-cd status-check
 python -m venv .venv
-
-# Windows
-.venv\Scripts\pip install -r requirements.txt
-cp .env.example .env
-
-# macOS / Linux
-# source .venv/bin/activate
-# pip install -r requirements.txt
-# cp .env.example .env
-
-.venv\Scripts\uvicorn app.main:app --reload
 ```
 
-- API docs: http://127.0.0.1:8000/docs  
-- Health: http://127.0.0.1:8000/health → `{"status":"ok"}`
+**Windows (Git Bash or cmd):**
 
-### Frontend
+```bash
+.venv/Scripts/pip install -r requirements.txt
+cp .env.example .env
+.venv/Scripts/uvicorn app.main:app --reload
+```
 
-In a second terminal:
+**macOS / Linux:**
+
+```bash
+source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+uvicorn app.main:app --reload
+```
+
+Backend URLs:
+
+- API docs: http://127.0.0.1:8000/docs
+- Health check (backend only): http://127.0.0.1:8000/health → `{"status":"ok"}`
+
+### 2. Frontend
+
+In a **second terminal**, from the project root:
 
 ```bash
 cd frontend
 npm install
-cp .env.example .env.local   # optional, default API URL is fine for local dev
+cp .env.example .env.local   # optional — default API URL works for local dev
 npm run dev
 ```
 
-Open http://localhost:5173 — register or log in, then manage commitments.
+Open http://localhost:5173
+
+You should see the **login / register** screen. After sign-in: commitments list or calendar, filters, and create forms (manual + AI). The UI does not display raw `/health` JSON — use the backend URL above if you want to check the API directly.
 
 ---
 
@@ -67,17 +80,20 @@ Open http://localhost:5173 — register or log in, then manage commitments.
 | `DEBUG` | FastAPI debug mode (`true` for local dev) |
 | `DATABASE_URL` | Default: `sqlite:///./status_check.db` |
 | `SECRET_KEY` | JWT signing key — use a long random string in production |
+| `ALGORITHM` | JWT algorithm (default `HS256`) |
 | `ACCESS_TOKEN_EXPIRE_MINUTES` | JWT lifetime (default `60`) |
 | `OPENAI_API_KEY` | Required for `POST /commitments/ai-create` |
 | `OPENAI_MODEL` | Default: `gpt-4o-mini` |
 
-After changing `.env`, **restart uvicorn**. `--reload` watches Python files only; settings are cached at startup (`@lru_cache` on `get_settings()`).
+After changing `.env`, **restart uvicorn**. `--reload` watches Python files only; settings are loaded once at startup (`@lru_cache` on `get_settings()`).
 
 ### Frontend (`frontend/.env.local`)
 
 | Variable | Description |
 |----------|-------------|
 | `VITE_API_URL` | Backend URL (default `http://127.0.0.1:8000`) |
+
+Restart `npm run dev` after changing `.env.local`.
 
 ---
 
@@ -110,7 +126,7 @@ Password: 6–72 characters. Usernames and emails must be unique.
 GET /commitments?project=backend&reviewer=anna
 ```
 
-**Auto-expiry:** stored status may stay `"to check"`, but response shows `"expired"` when deadline is in the past and status is not `"done"`.
+**Auto-expiry:** stored status may stay `"to check"`, but the response shows `"expired"` when the deadline is in the past and status is not `"done"`.
 
 ### Swagger
 
@@ -133,11 +149,11 @@ GET /commitments?project=backend&reviewer=anna
 **Behaviour:**
 
 - JWT stored in `localStorage`
-- Edit / delete / quick status hidden on cards you did not create
-- Expired session (401 on list load) → automatic logout back to login form
+- Edit / delete / quick status only on commitments you created
+- Expired or invalid token (401 while loading the list) → logout and back to login
 - Calendar groups commitments by **local** deadline date
 
-**Build for production:**
+**Production build:**
 
 ```bash
 cd frontend
@@ -174,10 +190,10 @@ status-check/
 ## Production checklist
 
 - Set a strong `SECRET_KEY` and `DEBUG=false` in `.env`
-- Use HTTPS; do not expose default secrets
-- Add your frontend origin to CORS in `app/main.py` (currently localhost only)
-- Consider rate limiting on `/auth/login` and `/commitments/ai-create` if public
-- SQLite is fine for a small team; migrate to PostgreSQL if you outgrow it
+- Use HTTPS; do not use default secrets in production
+- Add your frontend origin to CORS in `app/main.py` (localhost only by default)
+- Consider rate limiting on `/auth/login` and `/commitments/ai-create` if the app is public
+- SQLite suits a small team; consider PostgreSQL if you outgrow it
 
 ---
 
@@ -193,4 +209,4 @@ Content-Type: application/json
 }
 ```
 
-Returns the same shape as `POST /commitments` (`CommitmentRead`).
+Returns the same JSON shape as `POST /commitments`.
