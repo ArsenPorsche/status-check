@@ -1,4 +1,5 @@
-# Render Blueprint: один веб-сервіс (Docker) із постійним SQLite
+# Render Blueprint: один веб-сервіс (Docker), free tier (без диска)
+# SQLite у файловій системі контейнера — дані скидаються при redeploy; SEED_ON_STARTUP відновлює демо.
 # Деплой: https://render.com/docs/blueprint-spec — підключити репо → New Blueprint
 
 services:
@@ -15,10 +16,6 @@ services:
       - key: SEED_ON_STARTUP
         value: "true"
       - key: DATABASE_URL
-        value: sqlite:////data/status_check.db
+        value: sqlite:///./status_check.db
       - key: SECRET_KEY
         generateValue: true
-    disk:
-      name: status-check-data
-      mountPath: /data
-      sizeGB: 1
