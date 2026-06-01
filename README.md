@@ -38,6 +38,22 @@ npm run dev
 
 App: http://localhost:5173 — login or register, then manage commitments.
 
+## Test data
+
+Optional sample users and commitments (safe to re-run; skips existing rows):
+
+```bash
+.venv/Scripts/python -m scripts.seed_db
+```
+
+| Username | Password |
+|----------|----------|
+| `anna` | `password123` |
+| `misha` | `password123` |
+| `olena` | `password123` |
+
+Includes mixed projects, deadlines, and statuses (including past deadlines for auto-expiry).
+
 ## Configuration
 
 Copy `.env.example` → `.env` and `frontend/.env.example` → `frontend/.env.local`, then set:
