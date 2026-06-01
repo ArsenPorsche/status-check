@@ -35,6 +35,9 @@ async def lifespan(app: FastAPI):
     yield — далі сервер приймає запити.
     """
     init_db()
+    from scripts.seed_db import fix_legacy_user_emails
+
+    fix_legacy_user_emails()
     if settings.seed_on_startup:
         from scripts.seed_db import seed_database
 

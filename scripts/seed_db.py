@@ -18,17 +18,17 @@ TEST_PASSWORD = "password123"
 USERS = [
     {
         "username": "anna",
-        "email": "anna.pm@test.local",
+        "email": "anna.pm@example.com",
         "full_name": "Anna Koval",
     },
     {
         "username": "misha",
-        "email": "misha.dev@test.local",
+        "email": "misha.dev@example.com",
         "full_name": "Misha Petrenko",
     },
     {
         "username": "olena",
-        "email": "olena.qa@test.local",
+        "email": "olena.qa@example.com",
         "full_name": "Olena Shevchenko",
     },
 ]
@@ -43,9 +43,28 @@ def _deadline(days_from_now: int, hour: int = 17, minute: int = 0) -> datetime:
     return base + timedelta(days=days_from_now)
 
 
+def fix_legacy_user_emails() -> None:
+    """Замінює застарілі @test.local email на валідні (після оновлення Pydantic)."""
+    email_by_username = {row["username"]: row["email"] for row in USERS}
+    db = SessionLocal()
+    try:
+        changed = False
+        for user in db.query(User).filter(User.email.endswith("@test.local")).all():
+            new_email = email_by_username.get(user.username)
+            if new_email:
+                user.email = new_email
+                changed = True
+        if changed:
+            db.commit()
+            print("Updated legacy @test.local emails.")
+    finally:
+        db.close()
+
+
 def seed_database() -> None:
     """Додає демо-користувачів і зобов'язання, якщо їх ще немає (ідемпотентно)."""
     init_db()
+    fix_legacy_user_emails()
     db = SessionLocal()
 
     try:

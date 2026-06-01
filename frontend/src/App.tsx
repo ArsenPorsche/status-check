@@ -1,6 +1,7 @@
 // Головний екран: крок 4 — список commitments після входу
 
 import { useCallback, useEffect, useState } from "react";
+import { ApiError } from "./api/errors";
 import { fetchMe, logout, type UserResponse } from "./api/auth";
 import { getToken } from "./auth/token";
 import AuthPanel from "./components/AuthPanel";
@@ -9,6 +10,7 @@ import CommitmentList from "./components/CommitmentList";
 function App() {
   const [user, setUser] = useState<UserResponse | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
+  const [authError, setAuthError] = useState<string | null>(null);
 
   const loadUser = useCallback(async () => {
     const token = getToken();
@@ -21,9 +23,17 @@ function App() {
     try {
       const me = await fetchMe();
       setUser(me);
-    } catch {
+      setAuthError(null);
+    } catch (err: unknown) {
       logout();
       setUser(null);
+      const message =
+        err instanceof ApiError
+          ? err.message
+          : err instanceof Error
+            ? err.message
+            : "Could not load session";
+      setAuthError(message);
     } finally {
       setAuthLoading(false);
     }
@@ -63,7 +73,15 @@ function App() {
       </header>
 
       {!user ? (
-        <AuthPanel onSuccess={loadUser} />
+        <>
+          {authError && <p className="error">{authError}</p>}
+          <AuthPanel
+            onSuccess={() => {
+              setAuthError(null);
+              return loadUser();
+            }}
+          />
+        </>
       ) : (
         <>
           <p className="welcome">
