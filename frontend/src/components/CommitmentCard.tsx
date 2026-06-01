@@ -119,6 +119,10 @@ export default function CommitmentCard({ item, currentUserId, onChanged }: Props
           <dt>Deadline</dt>
           <dd>{formatDate(item.deadline)}</dd>
         </div>
+        <div>
+          <dt>Created</dt>
+          <dd>{formatDate(item.created_at)}</dd>
+        </div>
       </dl>
 
       {canEdit && (
