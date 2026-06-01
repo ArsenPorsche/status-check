@@ -36,7 +36,7 @@ export default function CommitmentAICreate({ onCreated }: Props) {
     <form className="form create-form" onSubmit={handleSubmit}>
       <h3>Create with AI</h3>
       <p className="hint">
-        Example: Misha promised to deliver the API for Backend by next Tuesday.
+        Example: Misha promised to deliver the API for Backend by 02.06.26 15:00.
         Anna is the reviewer.
       </p>
 
