@@ -33,6 +33,15 @@ class Settings(BaseSettings):
     openai_api_key: str = ""
     openai_model: str = "gpt-4o-mini"
 
+    # Продакшен: віддавати зібраний React з frontend/dist (один URL для API і UI)
+    serve_frontend: bool = False
+
+    # Дозволені origins для CORS через кому (порожньо — лише dev-значення)
+    cors_origins: str = ""
+
+    # Завантажити демо-користувачів і зобов'язання при старті (безпечно повторювати)
+    seed_on_startup: bool = False
+
     # Звідки читати .env (файл у корені проєкту)
     model_config = SettingsConfigDict(
         env_file=".env",

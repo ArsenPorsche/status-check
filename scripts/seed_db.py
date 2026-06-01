@@ -43,7 +43,8 @@ def _deadline(days_from_now: int, hour: int = 17, minute: int = 0) -> datetime:
     return base + timedelta(days=days_from_now)
 
 
-def main() -> None:
+def seed_database() -> None:
+    """Додає демо-користувачів і зобов'язання, якщо їх ще немає (ідемпотентно)."""
     init_db()
     db = SessionLocal()
 
@@ -172,6 +173,10 @@ def main() -> None:
         print(f"Login with any test user, password: {TEST_PASSWORD}")
     finally:
         db.close()
+
+
+def main() -> None:
+    seed_database()
 
 
 if __name__ == "__main__":

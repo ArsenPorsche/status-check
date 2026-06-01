@@ -1,0 +1,24 @@
+# Render Blueprint: один веб-сервіс (Docker) із постійним SQLite
+# Деплой: https://render.com/docs/blueprint-spec — підключити репо → New Blueprint
+
+services:
+  - type: web
+    name: status-check
+    runtime: docker
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: SERVE_FRONTEND
+        value: "true"
+      - key: DEBUG
+        value: "false"
+      - key: SEED_ON_STARTUP
+        value: "true"
+      - key: DATABASE_URL
+        value: sqlite:////data/status_check.db
+      - key: SECRET_KEY
+        generateValue: true
+    disk:
+      name: status-check-data
+      mountPath: /data
+      sizeGB: 1

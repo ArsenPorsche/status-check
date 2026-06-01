@@ -26,7 +26,7 @@ export async function readApiError(response: Response): Promise<string> {
       return data.detail.map((item) => item.msg).join("; ");
     }
   } catch {
-    // ignore
+    // ігноруємо, якщо тіло відповіді не JSON
   }
   return `Request failed: ${response.status}`;
 }

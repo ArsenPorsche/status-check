@@ -2,10 +2,12 @@
  * Адреса FastAPI backend.
  * VITE_API_URL з .env.local або значення за замовчуванням.
  */
+// У production — той самий хост (порожній базовий URL); у dev — окремий бекенд
 export const API_URL =
-  import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8000";
+  import.meta.env.VITE_API_URL ??
+  (import.meta.env.PROD ? "" : "http://127.0.0.1:8000");
 
-/** Locale for dates in UI (month names, etc.) */
+/** Локаль для дат у UI (назви місяців тощо) */
 export const UI_LOCALE = "en-US";
 
 /** Ліміти полів — як у бекенді (Pydantic schemas) */
